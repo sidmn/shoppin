@@ -14,29 +14,30 @@ type Product = {
   imageUrl: string;
 };
 
-type Props = {
+type CardProps = {
   product: Product;
   onSwipe: (direction: "left" | "right" | "top", id: number) => void;
 };
 
-export default function SwipeableCard({ product, onSwipe }: Props) {
+export default function ProductCard({ product, onSwipe }: CardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const el = cardRef.current;
-    if (!el) return;
+    const card = cardRef.current;
+    if (!card) return;
     const bounds = {
       minY: -window.innerHeight,
       maxY: 0,
     };
 
-    Draggable.create(el, {
+    Draggable.create(card, {
       type: "x,y",
       inertia: true,
       edgeResistance: 0,
       allowContextMenu: true,
       bound: bounds,
 
+      // to disable bottom swipe/drag
       liveSnap: {
         y: function (endValue) {
           return endValue > 0 ? 0 : endValue;
@@ -49,10 +50,10 @@ export default function SwipeableCard({ product, onSwipe }: Props) {
       },
       onDrag() {
         const rotation = this.x / 20;
-        gsap.to(el, { rotation, duration: 0, ease: "none" });
+        gsap.to(card, { rotation, duration: 0, ease: "none" });
       },
       onDragEnd() {
-        const el = cardRef.current;
+        const card = cardRef.current;
         const thresholdX = 100;
         const thresholdY = -100;
 
@@ -60,7 +61,8 @@ export default function SwipeableCard({ product, onSwipe }: Props) {
         const currentY = this.endY;
 
         if (currentX > thresholdX) {
-          gsap.to(el, {
+          //right swipe successful
+          gsap.to(card, {
             x: window.innerWidth,
             rotation: 20,
             opacity: 0,
@@ -68,7 +70,8 @@ export default function SwipeableCard({ product, onSwipe }: Props) {
             onComplete: () => onSwipe("right", product.id),
           });
         } else if (currentX < -thresholdX) {
-          gsap.to(el, {
+          //left swipe sucessful
+          gsap.to(card, {
             x: -window.innerWidth,
             rotation: -20,
             opacity: 0,
@@ -76,14 +79,15 @@ export default function SwipeableCard({ product, onSwipe }: Props) {
             onComplete: () => onSwipe("left", product.id),
           });
         } else if (currentY < thresholdY) {
-          gsap.to(el, {
+          //top swipe successful
+          gsap.to(card, {
             y: -window.innerHeight,
             opacity: 0,
             ease: "none",
             onComplete: () => onSwipe("top", product.id),
           });
         } else {
-          gsap.to(el, { x: 0, y: 0, rotation: 0, ease: "none" });
+          gsap.to(card, { x: 0, y: 0, rotation: 0, ease: "none" });
         }
       },
     });
@@ -92,9 +96,9 @@ export default function SwipeableCard({ product, onSwipe }: Props) {
   return (
     <div
       ref={cardRef}
-      className="absolute w-11/12 max-w-sm p-4 bg-white rounded-2xl shadow-lg"
+      className="absolute w-80 h-110 max-w-sm p-4 bg-white rounded-2xl shadow-lg"
       style={{
-        transformOrigin: "bottom center", // ✅ Pivot from bottom
+        transformOrigin: "bottom center", 
       }}
     >
       <img

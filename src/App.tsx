@@ -1,5 +1,7 @@
+//Assignment by Siddharth Mantri
+
 import { useState } from "react";
-import { products as mockProducts } from "./data/products";
+import { products } from "./data/products";
 import ProductCard from "./components/ProductCard";
 
 const App = () => {
@@ -9,11 +11,11 @@ const App = () => {
     direction: "left" | "right" | "top",
     productId: number
   ) => {
-    console.log(`${direction.toUpperCase()} swipe on Product ID: ${productId}`);
+    console.log(`${direction.toUpperCase()} swipe on Product id: ${productId}`);
     setIndex((prev) => prev + 1);
   };
 
-  const currentProducts = mockProducts.slice(index);
+  const currentProducts = products.slice(index);
 
   return (
     <div className="h-screen w-full bg-gray-100 flex items-center justify-center relative overflow-hidden">
